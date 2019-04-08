@@ -1,5 +1,5 @@
-ANTLR=./antlr4
-ANTLRRUNTIME=./ANTLR4-CPP
+ANTLR=/shares/public/tp/antlr/bin/antlr4
+ANTLRRUNTIME=/shares/public/tp/ANTLR4-CPP
 
 default:
 	$(ANTLR) -visitor -no-listener -Dlanguage=Cpp  Main.g4
@@ -8,17 +8,22 @@ clean:
 	rm -rf MainBaseVisitor.* MainLexer.* MainParser.* MainVisitor.* *.dot *.pdf *.interp *.tokens *.exe *.s *.o *.out
 
 build:
-	./Main.exe ./tests/test.c
-	as -o ./tests/results/test/test.o ./tests/results/test/test.s
-	gcc ./tests/results/test/test.o
-testsBackEnd:
-	mkdir -p ./tests/testsBackEnd/results/$(file)/out
-	./Main.exe ./tests/testsBackEnd/$(file).c
-	as -o ./tests/testsBackEnd/results/$(file)/$(file).o ./tests/testsBackEnd/results/$(file)/$(file).s
-	gcc -std=c99 -w ./tests/testsBackEnd/results/$(file)/$(file).o -o ./tests/testsBackEnd/results/$(file)/$(file).out2
+	./Main.exe $(folderC)/$(file).c $(file) $(folderC) $(folderO) $(folderOutput)
+	as -o $(folderO)/$(file).o $(folderO)/$(file).s
+	gcc $(folderO)/$(file).o -o $(folderO)/$(file).out
 
-testsFrontEnd:
-	mkdir -p ./tests/testsFrontEnd/results/$(file)
-	./Main.exe ./tests/testsFrontEnd/$(file).c .
-	as -o ./tests/testsFrontEnd/results/$(file)/$(file).o ./tests/testsFrontEnd/results/$(file)/$(file).s
-	gcc -std=c99 -w ./tests/testsFrontEnd/results/$(file)/$(file).o -o ./tests/testsFrontEnd/results/$(file)/$(file).out
+BackEnd:
+	
+	mkdir -p ./tests/testsBackEnd/results
+	mkdir -p $(folderOutput)
+	./Main.exe $(folderC)/$(file).c $(file) $(folderC) $(folderO) $(folderOutput)
+	as -o $(folderO)/$(file).o $(folderO)/$(file).s
+	gcc $(folderO)/$(file).o -o $(folderO)/$(file).out2
+BackClean:
+	rm -rf ./tests/testsBackEnd/results
+FrontEnd:
+	mkdir -p $(folderC)/results/$(file) 
+	./Main.exe $(folderC)/$(file).c $(file) $(folderC) $(folderO) $(folderOutput)
+	as -o $(folderO)/$(file).o $(folderO)/$(file).s
+FrontClean:
+	rm -rf ./tests/testsFrontEnd/ValidPrograms/results ./tests/testsFrontEnd/SyntaxError/results ./tests/testsFrontEnd/SemanticError/results ./tests/testsFrontEnd/LexError/results

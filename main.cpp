@@ -22,13 +22,12 @@ int main(int argc, const char ** argv)
         return -1;
     }
 
-	string s(argv[1]);
-	size_t pos1=s.find_last_of("/");
-	string folderC=s.substr(0,pos1);
-	string fileC=s.substr(pos1);
-	size_t pos2=fileC.find(".c");
-	string file=fileC.substr(0,pos2);
-
+	string file(argv[2]);
+	cout<<file<<endl;
+	string folderC(argv[3]);
+	string folderO(argv[4]);
+	string folderOutput(argv[5]);
+	
     ANTLRInputStream input(is);
 
     MainLexer lexer(&input);
@@ -42,15 +41,14 @@ int main(int argc, const char ** argv)
     DotExport dotexport(&parser);
     tree::ParseTreeWalker::DEFAULT.walk(&dotexport,tree);
     ofstream out;
-    out.open(folderC+"/results/"+file+"/tmp.dot");
+    out.open(folderO+"/tmp.dot");
     out<<dotexport.getDotFile();
     out.close();
-	string outPDF=folderC+"/results/"+file+"/out.pdf ";
-	string tmpDOT=folderC+"/results/"+file+"/tmp.dot";
-	string cmd="dot -Tpdf -o "+outPDF+tmpDOT;
+	string outPDF=folderO+"/out.pdf";
+	string tmpDOT=folderO+"/tmp.dot";
+	string cmd="dot -Tpdf -o "+outPDF+" "+tmpDOT;
     system(cmd.c_str());
 
-   
     Comp visitor;
 
 
@@ -59,7 +57,7 @@ int main(int argc, const char ** argv)
 
 	
 	ofstream o;
-    o.open(folderC+"/results/"+file+"/"+file+".s");
+    o.open(folderO+"/"+file+".s");
 
     prog->generateCode(o);
 	cout << "PLD COMP Success" << endl;
